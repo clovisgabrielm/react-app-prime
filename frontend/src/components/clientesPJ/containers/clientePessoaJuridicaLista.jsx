@@ -20,15 +20,14 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Modal from '@material-ui/core/Modal';
 
 const columns = [
-  { id: 'nome', label: 'Nome', minWidth: 170 },
-  { id: 'cpf', label: 'CPF', minWidth: 100 },
-  { id: 'dataCadastro', label: 'Data de cadastro', minWidth: 100 },
-  { id: 'contatos', label: 'Contatos', minWidth: 100 },
+  { id: 'nomeFantasia', label: 'Nome Fantasia', minWidth: 170 },
+  { id: 'cnpj', label: 'CNPJ', minWidth: 100 },
+  { id: 'uf', label: 'UF', minWidth: 100 },
   { id: 'instituicaoFinanceira', label: 'Instituição financeira', minWidth: 100 }
 ];
 
 
-export default class ClientePessoaFisicaLista extends React.Component {
+export default class ClientePessoaJuridicaLista extends React.Component {
    
     state = {
         page: 0,
@@ -39,8 +38,9 @@ export default class ClientePessoaFisicaLista extends React.Component {
     };
 
     componentDidMount() {
-        API.get("clientesPessoaFisica")
+        API.get("clientesPessoaJuridica")
             .then(res => {
+                console.log(res.data)
                 this.setState({ data: res.data });
             })
             .catch(err => {
@@ -48,12 +48,12 @@ export default class ClientePessoaFisicaLista extends React.Component {
             });
     }
 
-    criarNovoClientePF = () => {
+    criarNovoClientePJ = () => {
         const { history, match: { url } } = this.props;
         history.push(`${url}/criar`);
     }
 
-    editarClientePF = (id) => {
+    editarClientePJ = (id) => {
         const { history, match: { url } } = this.props;
         history.push(`${url}/editar/${id}`);
     }
@@ -63,7 +63,7 @@ export default class ClientePessoaFisicaLista extends React.Component {
     }
 
     onDelete = (id) => {
-        API.delete(`clientesPessoaFisica/delete/${id}`)
+        API.delete(`clientesPessoaJuridica/delete/${id}`)
             .then(() => {
                 this.setState({ openModalDelete: false });
                 window.location.reload();
@@ -102,8 +102,8 @@ export default class ClientePessoaFisicaLista extends React.Component {
             <Paper style={{ marginTop: 100 }}>
                 <div className="tableTitle">
                     <Grid container justify="space-between">  
-                        <h2 style={{ marginLeft: 30 }}>Lista de Clientes (Pessoa Física)</h2>
-                        <h2 style={{ marginRight: 30 }}><Button variant="contained" onClick={this.criarNovoClientePF} color="secondary">Novo <AddCircleOutlineIcon /></Button></h2>
+                        <h2 style={{ marginLeft: 30 }}>Lista de Clientes (Pessoa Jurídica)</h2>
+                        <h2 style={{ marginRight: 30 }}><Button variant="contained" onClick={this.criarNovoClientePJ} color="secondary">Novo <AddCircleOutlineIcon /></Button></h2>
                     </Grid>
                 </div>
                 <TableContainer className="container">
@@ -136,7 +136,7 @@ export default class ClientePessoaFisicaLista extends React.Component {
                                 })}
                                 <TableCell>
                                     <ButtonGroup size="small" aria-label="small outlined button group">
-                                        <Button variant="contained" onClick={() => this.editarClientePF(row.identificador)} color="primary"><EditIcon /></Button>
+                                        <Button variant="contained" onClick={() => this.editarClientePJ(row.identificador)} color="primary"><EditIcon /></Button>
                                         <Button 
                                             variant="contained" 
                                             onClick={() => this.confirmDelete(row)} 
@@ -173,7 +173,7 @@ export default class ClientePessoaFisicaLista extends React.Component {
                         <div style={{ paddingLeft: 15, paddingBottom: 15, marginRight: 15 }}>
                             <h2>Confirmação de exclusão</h2>
                             <p id="simple-modal-description">
-                                Deseja realmente apagar o cliente {clienteParaDeletar.nome}?
+                                Deseja realmente apagar o cliente {clienteParaDeletar.nomeFantasia}?
                             </p>
                             <Button variant="contained" onClick={() => this.onDelete(clienteParaDeletar.identificador)} color="primary">Confirmar</Button>
                         </div>

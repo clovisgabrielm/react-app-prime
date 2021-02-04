@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import {
-  ClientePessoaFisicaLista,
-  ClientePessoaFisicaCriar,
-  ClientePessoaFisicaEditar
+  ClientePessoaJuridicaLista,
+  ClientePessoaJuridicaCriar,
+  ClientePessoaJuridicaEditar
 } from './containers';
 
-export default class ClientePessoaFisica extends React.Component {
+export default class ClientePessoaJuridica extends React.Component {
  
   render() {
     const { match: { path } } = this.props;
@@ -16,17 +16,17 @@ export default class ClientePessoaFisica extends React.Component {
                 <Route
                     path={`${path}/criar`}
                     exact
-                    component={ClientePessoaFisicaCriar}
+                    component={ClientePessoaJuridicaCriar}
                 />
                 <Route
                     path={`${path}/editar/:id`}
                     exact
-                    component={ClientePessoaFisicaEditar}
+                    component={ClientePessoaJuridicaEditar}
                 />
                 <Route
                     path={`${path}`}
                     exact
-                    component={ClientePessoaFisicaLista}
+                    component={ClientePessoaJuridicaLista}
                 />
             </Switch>
         </BrowserRouter>

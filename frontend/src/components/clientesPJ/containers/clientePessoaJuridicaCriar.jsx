@@ -9,7 +9,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import API from '../../../api/api';
 
 
-export default class ClientePessoaFisicaCriar extends React.Component {
+export default class ClientePessoaJuridicaCriar extends React.Component {
 
     constructor() {
         super();
@@ -26,10 +26,10 @@ export default class ClientePessoaFisicaCriar extends React.Component {
     }
 
     onSubmit = () => {
-        API.post("clientesPessoaFisica", this.state)
+        API.post("clientesPessoaJuridica", this.state)
         .then(() => {
             const { history } = this.props;
-            history.push("/clientesPessoaFisica");
+            history.push("/clientesPessoaJuridica");
         })
         .catch(err => {
             console.log(err);
@@ -43,23 +43,33 @@ export default class ClientePessoaFisicaCriar extends React.Component {
   render() {
     return (
         <Container>
-            <h3 style={{ marginTop: 100 }}>Cadastrar Cliente (Pessoa Física)</h3>
+            <h3 style={{ marginTop: 100 }}>Cadastrar Cliente (Pessoa Jurídica)</h3>
             <form noValidate autoComplete="off">
                 <div>
                     <TextField
                         required
-                        label="Nome"
+                        label="Nome fantasia"
                         variant="outlined"
                         margin="dense"
-                        name="nome"
+                        name="nomeFantasia"
                         onChange={this.onChange}
                     />
                 </div>
                 <div>
                     <TextField
                         required
-                        label="CPF"
-                        name="cpf"
+                        label="CNPJ"
+                        name="cnpj"
+                        variant="outlined"
+                        margin="dense"
+                        onChange={this.onChange}
+                    />
+                </div>
+                <div>
+                    <TextField
+                        required
+                        label="UF"
+                        name="uf"
                         variant="outlined"
                         margin="dense"
                         onChange={this.onChange}

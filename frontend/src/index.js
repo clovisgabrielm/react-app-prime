@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Container from '@material-ui/core/Container';
-import DenseAppBar from './components/commons/DenseAppBar';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import DenseAppBar from './components/commons/denseAppBar';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import ClientePessoaFisica from './components/clientesPF/clientePessoaFisica';
+import ClientePessoaJuridica from './components/clientesPJ/clientePessoaJuridica';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -13,6 +14,7 @@ ReactDOM.render(
     <Container fixed>
       <Switch>
         <Route path="/clientesPessoaFisica" exact={true} component={ClientePessoaFisica} />
+        <Route path="/clientesPessoaJuridica" exact={true} component={ClientePessoaJuridica} />
       </Switch>
     </Container>
   </ BrowserRouter>,
