@@ -11,6 +11,10 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import styles from '../../../index.css';
+import API from '../../../api/api';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const columns = [
   { id: 'nome', label: 'Nome', minWidth: 170 },
@@ -20,42 +24,37 @@ const columns = [
   { id: 'instituicaoFinanceira', label: 'Instituição financeira', minWidth: 100 }
 ];
 
-function createData(name, code, population, size) {
-  const density = population / size;
-  return { name, code, population, size, density };
-}
-
-const rows = [
-  createData('India', 'IN', 1324171354, 3287263),
-  createData('China', 'CN', 1403500365, 9596961),
-  createData('Italy', 'IT', 60483973, 301340),
-  createData('United States', 'US', 327167434, 9833520),
-  createData('Canada', 'CA', 37602103, 9984670),
-  createData('Australia', 'AU', 25475400, 7692024),
-  createData('Germany', 'DE', 83019200, 357578),
-  createData('Ireland', 'IE', 4857000, 70273),
-  createData('Mexico', 'MX', 126577691, 1972550),
-  createData('Japan', 'JP', 126317000, 377973),
-  createData('France', 'FR', 67022000, 640679),
-  createData('United Kingdom', 'GB', 67545757, 242495),
-  createData('Russia', 'RU', 146793744, 17098246),
-  createData('Nigeria', 'NG', 200962417, 923768),
-  createData('Brazil', 'BR', 210147125, 8515767),
-];
-
 export default class ClientePessoaFisicaLista extends React.Component {
 
     state = {
         page: 0,
-        rowsPerPage: 10
+        rowsPerPage: 10,
+        data: []
     };
 
     componentDidMount() {
+        API.get("clientesPessoaFisica")
+            .then(res => {
+                this.setState({ data: res.data });
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     criarNovoClientePF = () => {
         const { history, match: { url } } = this.props;
         history.push(`${url}/criar`);
+    }
+
+    getInstituicao = (value) => {
+        return (
+            <RadioGroup defaultValue={value} onChange={this.onChange} name="instituicaoFinanceira">
+                <FormControlLabel name="instituicaoFinanceira" value="Banco 1" control={<Radio color="primary" />} label="Banco 1" />
+                <FormControlLabel name="instituicaoFinanceira" value="Banco 2" control={<Radio color="primary" />} label="Banco 2" />
+                <FormControlLabel name="instituicaoFinanceira" value="Banco 3" control={<Radio color="primary" />} label="Banco 3" />
+            </RadioGroup>
+        );
     }
 
     render() {
@@ -68,7 +67,7 @@ export default class ClientePessoaFisicaLista extends React.Component {
         };
 
         
-        const { page, rowsPerPage } = this.state;
+        const { page, rowsPerPage, data } = this.state;
         
         return (
             <Paper className={styles.marginTop}>
@@ -84,27 +83,31 @@ export default class ClientePessoaFisicaLista extends React.Component {
                     <TableRow>
                     {columns.map((column) => (
                         <TableCell
-                        key={column.id}
-                        align={column.align}
-                        style={{ minWidth: column.minWidth }}
+                            key={column.id}
+                            align={column.align}
+                            style={{ minWidth: column.minWidth }}
                         >
-                        {column.label}
+                            {column.label}
                         </TableCell>
                     ))}
+                    <TableCell></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                    {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     return (
-                        <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                        <TableRow hover role="checkbox" tabIndex={-1} key={row.nome}>
                         {columns.map((column) => {
                             const value = row[column.id];
                             return (
                             <TableCell key={column.id} align={column.align}>
-                                {column.format && typeof value === 'number' ? column.format(value) : value}
+                                {column.label === 'Instituição financeira' ? this.getInstituicao(value) : value}
                             </TableCell>
                             );
                         })}
+                        <TableCell>
+                            EDITAR
+                        </TableCell>
                         </TableRow>
                     );
                     })}
@@ -114,7 +117,7 @@ export default class ClientePessoaFisicaLista extends React.Component {
             <TablePagination
                 rowsPerPageOptions={[10, 25, 100]}
                 component="div"
-                count={rows.length}
+                count={data.length}
                 rowsPerPage={rowsPerPage}
                 labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
                 labelRowsPerPage="Items por página"

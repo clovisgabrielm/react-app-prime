@@ -27,7 +27,7 @@ export default function DenseAppBar() {
   
   return (
     <div className={classes.root}>
-      <AppBar className={classes.backgroundAppBar} position="static">
+      <AppBar className={classes.backgroundAppBar} position="fixed">
         <Toolbar variant="dense">
           <Grid container justify="space-between">  
             <Typography variant="h6" align="left" color="inherit">
