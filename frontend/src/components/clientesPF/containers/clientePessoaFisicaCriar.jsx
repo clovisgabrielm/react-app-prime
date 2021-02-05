@@ -7,6 +7,9 @@ import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import API from '../../../api/api';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import InputMask from 'react-input-mask';
+import Divider from '@material-ui/core/Divider';
 
 
 export default class ClientePessoaFisicaCriar extends React.Component {
@@ -22,6 +25,9 @@ export default class ClientePessoaFisicaCriar extends React.Component {
             cpf: '',
             dataCadastro: date,
             instituicaoFinanceira: 'Banco A',
+            contatos: [{
+                telefone: ''
+            }]
         }
     }
 
@@ -37,13 +43,35 @@ export default class ClientePessoaFisicaCriar extends React.Component {
     }
 
     onChange = e => {
-        this.setState({[e.target.name]: e.target.value})
+        this.setState({[e.target.name]: e.target.value});
     }
 
+    onChangeTelefone = (e, index) => {
+        let contatos = [...this.state.contatos];
+        let contato = {...contatos[index]};
+        contato.telefone = e.target.value;
+        contatos[index] = contato;
+        this.setState({contatos});
+    }
+
+    novoContato = () => {
+        this.setState({ ...this.state, contatos: [ ...this.state.contatos, { telefone: '' }] });
+    }
+    
+    voltar = () => {
+        const { history } = this.props;
+        history.push("/clientesPessoaFisica");
+    }
+
+    
   render() {
+    
+    const { contatos } = this.state;
+
     return (
         <Container>
-            <h3 style={{ marginTop: 100 }}>Cadastrar Cliente (Pessoa Física)</h3>
+            <h2 style={{ marginTop: 100 }}>Cadastrar Cliente (Pessoa Física)</h2>
+            <Divider style={{ marginBottom: 20 }} />
             <form noValidate autoComplete="off">
                 <div>
                     <TextField
@@ -51,30 +79,75 @@ export default class ClientePessoaFisicaCriar extends React.Component {
                         label="Nome"
                         variant="outlined"
                         margin="dense"
+                        style={{ width: 350 }}
                         name="nome"
                         onChange={this.onChange}
                     />
                 </div>
                 <div>
-                    <TextField
-                        required
-                        label="CPF"
-                        name="cpf"
-                        variant="outlined"
-                        margin="dense"
+                    <InputMask
+                        mask="999.999.999-99"
+                        maskChar=" "
                         onChange={this.onChange}
-                    />
+                    >
+                        {
+                            () => 
+                            <TextField
+                                required
+                                label="CPF"
+                                name="cpf"
+                                style={{ width: 350 }}
+                                variant="outlined"
+                                margin="dense"
+                            />
+                        }
+                    </InputMask>
+                        
                 </div>
-                
                 <div>
-                    <FormLabel component="legend">Instituição financeira</FormLabel>
+                    {
+                        contatos.map((contato, index) => {
+                            return (
+                            <div key={index}>
+                                <InputMask
+                                    mask="(99) 99999-9999"
+                                    maskChar=" "
+                                    value={contato.telefone}
+                                    onChange={(e) => this.onChangeTelefone(e, index)}
+                                >
+                                    {
+                                        () => 
+                                        <TextField
+                                            required
+                                            label={"Telefone " + (index + 1)}
+                                            name={"telefone" + (index + 1)}
+                                            style={{ width: 350 }}
+                                            variant="outlined"
+                                            margin="dense"
+                                        />
+                                    }
+                                </InputMask>
+                                <Button 
+                                    style={{marginTop: 10}}
+                                    onClick={this.novoContato}
+                                >
+                                    <AddCircleIcon/>
+                                </Button>
+                            </div>);
+                        })
+                    }
+                </div>
+                <div>
+                    <FormLabel style={{ marginTop: 20 }} component="legend">Instituição financeira</FormLabel>
                     <RadioGroup defaultValue="Banco 1" onChange={this.onChange} name="instituicaoFinanceira">
                         <FormControlLabel name="instituicaoFinanceira" value="Banco A" control={<Radio color="primary" />} label="Banco A" />
                         <FormControlLabel name="instituicaoFinanceira" value="Banco B" control={<Radio color="primary" />} label="Banco B" />
                         <FormControlLabel name="instituicaoFinanceira" value="Banco C" control={<Radio color="primary" />} label="Banco C" />
                     </RadioGroup>
                 </div>
-                <Button variant="contained" onClick={this.onSubmit} color="primary">Salvar</Button>
+                <Button variant="contained" onClick={this.onSubmit} style={{ marginTop: 20}} color="primary">Salvar</Button>
+                <Button variant="contained" onClick={this.voltar} style={{ marginTop: 20, marginLeft: 5 }} color="inherit">Voltar</Button>
+
             </form>
         </Container>
     );

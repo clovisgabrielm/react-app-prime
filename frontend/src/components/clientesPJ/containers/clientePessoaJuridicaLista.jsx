@@ -40,7 +40,6 @@ export default class ClientePessoaJuridicaLista extends React.Component {
     componentDidMount() {
         API.get("clientesPessoaJuridica")
             .then(res => {
-                console.log(res.data)
                 this.setState({ data: res.data });
             })
             .catch(err => {

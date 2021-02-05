@@ -3,7 +3,9 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import API from '../../../api/api';
-
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import InputMask from 'react-input-mask';
+import Divider from '@material-ui/core/Divider';
 
 export default class ClientePessoaFisicaEditar extends React.Component {
 
@@ -15,7 +17,11 @@ export default class ClientePessoaFisicaEditar extends React.Component {
             cpf: '',
             dataCadastro: '',
             instituicaoFinanceira: '',
-            contatos: []
+            contatos: [{
+                identificador: 0,
+                clientePessoaFisicaIdentificador: 0,
+                telefone: ''
+            }]
         };
     }
 
@@ -34,11 +40,11 @@ export default class ClientePessoaFisicaEditar extends React.Component {
                     contatos: res.data.contatos,
                     instituicaoFinanceira: res.data.instituicaoFinanceira
                 });
+                console.log(res.data.contatos)
             });
     }
 
     onSubmit = () => {
-        console.log(this.state)
         API.put(`clientesPessoaFisica/${this.state.identificador}`, this.state)
             .then(() => {
                 const { history } = this.props;
@@ -53,12 +59,26 @@ export default class ClientePessoaFisicaEditar extends React.Component {
         this.setState({ ...this.state, [e.target.name]: e.target.value})
     }
 
+    onChangeTelefone = (e, index) => {
+        let contatos = [...this.state.contatos];
+        let contato = {...contatos[index]};
+        contato.clientePessoaFisicaIdentificador = this.state.identificador;
+        contato.telefone = e.target.value;
+        contatos[index] = contato;
+        this.setState({contatos});
+    }
+
+    novoContato = () => {
+        this.setState({ ...this.state, contatos: [ ...this.state.contatos, {}] });
+    }
+
   render() {
       
-    const { nome, cpf } = this.state;
+    const { nome, cpf, contatos } = this.state;
     return (
         <Container>
-            <h3 style={{ marginTop: 100 }}>Editar Cliente (Pessoa Física)</h3>
+            <h2 style={{ marginTop: 100 }}>Editar Cliente (Pessoa Física)</h2>
+            <Divider style={{ marginBottom: 20 }} />
             <form autoComplete="off">
                 <div>
                     <TextField
@@ -67,22 +87,67 @@ export default class ClientePessoaFisicaEditar extends React.Component {
                         variant="outlined"
                         margin="dense"
                         name="nome"
+                        style={{ width: 350 }}
                         value={nome}
                         onChange={this.onChange}
                     />
                 </div>
                 <div>
-                    <TextField
-                        required
-                        label="CPF"
-                        name="cpf"
+                    <InputMask
+                        mask="999.999.999-99"
+                        maskChar=" "
                         value={cpf}
-                        variant="outlined"
-                        margin="dense"
                         onChange={this.onChange}
-                    />
+                    >
+                        {
+                            () => 
+                            <TextField
+                                required
+                                label="CPF"
+                                name="cpf"
+                                style={{ width: 350 }}
+                                variant="outlined"
+                                margin="dense"
+                            />
+                        }
+                    </InputMask>
                 </div>
-                <Button variant="contained" onClick={this.onSubmit} color="primary">Editar</Button>
+                
+                <div>
+                    {
+                        contatos.map((contato, index) => {
+                            return (
+                            <div key={index}>
+                                <InputMask
+                                    mask="(99) 99999-9999"
+                                    maskChar=" "
+                                    value={contato.telefone}
+                                    onChange={(e) => this.onChangeTelefone(e, index)}
+                                >
+                                    {
+                                        () => 
+                                        <TextField
+                                            required
+                                            label={"Telefone " + (index + 1)}
+                                            name={"telefone" + (index + 1)}
+                                            style={{ width: 350 }}
+                                            variant="outlined"
+                                            margin="dense"
+                                        />
+                                    }
+                                </InputMask>
+                                <Button 
+                                    style={{marginTop: 10}}
+                                    onClick={this.novoContato}
+                                >
+                                    <AddCircleIcon/>
+                                </Button>
+                            </div>);
+                        })
+                    }
+                </div>
+                <Button variant="contained" onClick={this.onSubmit} style={{ marginTop: 20 }} color="primary">Editar</Button>
+                <Button variant="contained" onClick={this.voltar} style={{ marginTop: 20, marginLeft: 5 }} color="inherit">Voltar</Button>
             </form>
         </Container>
     );

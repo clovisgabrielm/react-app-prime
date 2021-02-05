@@ -3,7 +3,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import API from '../../../api/api';
-
+import InputMask from 'react-input-mask';
+import Divider from '@material-ui/core/Divider';
 
 export default class ClientePessoaJuridicaEditar extends React.Component {
 
@@ -36,7 +37,6 @@ export default class ClientePessoaJuridicaEditar extends React.Component {
     }
 
     onSubmit = () => {
-        console.log(this.state)
         API.put(`clientesPessoaJuridica/${this.state.identificador}`, this.state)
             .then(() => {
                 const { history } = this.props;
@@ -45,6 +45,11 @@ export default class ClientePessoaJuridicaEditar extends React.Component {
             .catch(err => {
                 console.log(err);
             });
+    }
+
+    voltar = () => {
+        const { history } = this.props;
+        history.push("/clientesPessoaJuridica");
     }
 
     onChange = e => {
@@ -56,7 +61,8 @@ export default class ClientePessoaJuridicaEditar extends React.Component {
     const { nomeFantasia, cnpj, uf } = this.state;
     return (
         <Container>
-            <h3 style={{ marginTop: 100 }}>Editar Cliente (Pessoa Jurídica)</h3>
+            <h2 style={{ marginTop: 100 }}>Editar Cliente (Pessoa Jurídica)</h2>
+            <Divider style={{ marginBottom: 20 }} />
             <form autoComplete="off">
                 <div>
                     <TextField
@@ -65,33 +71,45 @@ export default class ClientePessoaJuridicaEditar extends React.Component {
                         variant="outlined"
                         margin="dense"
                         name="nomeFantasia"
+                        style={{ width: 350 }}
                         value={nomeFantasia}
                         onChange={this.onChange}
                     />
                 </div>
                 <div>
-                    <TextField
-                        required
-                        label="CNPJ"
-                        name="cnpj"
+                    <InputMask
+                        mask="99.999.999/9999-99"
                         value={cnpj}
-                        variant="outlined"
-                        margin="dense"
+                        maskChar=" "
                         onChange={this.onChange}
-                    />
+                    >
+                        {
+                            () => 
+                            <TextField
+                                required
+                                label="CNPJ"
+                                style={{ width: 350 }}
+                                name="cnpj"
+                                variant="outlined"
+                                margin="dense"
+                            />
+                        }
+                    </InputMask>
                 </div>
                 <div>
                     <TextField
                         required
                         label="UF"
                         name="uf"
+                        style={{ width: 350 }}
                         value={uf}
                         variant="outlined"
                         margin="dense"
                         onChange={this.onChange}
                     />
                 </div>
-                <Button variant="contained" onClick={this.onSubmit} color="primary">Editar</Button>
+                <Button variant="contained" onClick={this.onSubmit} style={{ marginTop: 20 }} color="primary">Editar</Button>
+                <Button variant="contained" onClick={this.voltar} style={{ marginTop: 20, marginLeft: 5 }} color="inherit">Voltar</Button>
             </form>
         </Container>
     );
