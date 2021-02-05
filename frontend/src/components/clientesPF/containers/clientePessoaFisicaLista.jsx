@@ -20,7 +20,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Modal from '@material-ui/core/Modal';
 import _ from 'lodash';
-import moment from 'moment'
+import moment from 'moment';
 
 const columns = [
   { id: 'nome', label: 'Nome', minWidth: 170 },
@@ -94,15 +94,27 @@ export default class ClientePessoaFisicaLista extends React.Component {
             });
     }
 
+    onRadioButtonChange = (e, cliente) => {
+        cliente.instituicaoFinanceira = e.target.value;
+        cliente.dataCadastro = moment(cliente.dataCadastro).format("YYYY-MM-DD");
+        API.put(`clientesPessoaFisica/instituicaoFinanceira/${cliente.identificador}`, cliente)
+            .then(() => {
+                console.log("Instituição financeira atualizada por SP.");
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
     /* Fecha os modais */
     fechar = () => {
         this.setState({ abrirModalDeletar: false, abrirModalVisualizar: false });
     }
 
     /* Retorna instituições em um RadioGroup */
-    obterInstituicao = (value) => {
+    obterInstituicao = (value, cliente) => {
         return (
-            <RadioGroup defaultValue={value} onChange={this.onChange} name="instituicaoFinanceira">
+            <RadioGroup defaultValue={value} onChange={(e) => this.onRadioButtonChange(e, cliente)} name="instituicaoFinanceira">
                 <FormControlLabel name="instituicaoFinanceira" value="Banco A" control={<Radio color="primary" />} label="Banco A" />
                 <FormControlLabel name="instituicaoFinanceira" value="Banco B" control={<Radio color="primary" />} label="Banco B" />
                 <FormControlLabel name="instituicaoFinanceira" value="Banco C" control={<Radio color="primary" />} label="Banco C" />
@@ -177,7 +189,7 @@ export default class ClientePessoaFisicaLista extends React.Component {
                                     const value = row[column.id];
                                     return (
                                     <TableCell key={column.id} align={column.align}>
-                                        {column.label === 'Instituição financeira' ? this.obterInstituicao(value) : value}
+                                        {column.label === 'Instituição financeira' ? this.obterInstituicao(value, row) : value}
                                     </TableCell>
                                     );
                                 })}

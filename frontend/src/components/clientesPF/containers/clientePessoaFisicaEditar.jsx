@@ -40,7 +40,6 @@ export default class ClientePessoaFisicaEditar extends React.Component {
                     contatos: res.data.contatos,
                     instituicaoFinanceira: res.data.instituicaoFinanceira
                 });
-                console.log(res.data.contatos)
             });
     }
 

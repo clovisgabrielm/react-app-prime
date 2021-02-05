@@ -18,6 +18,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Modal from '@material-ui/core/Modal';
+import moment from 'moment';
 
 const columns = [
   { id: 'nomeFantasia', label: 'Nome Fantasia', minWidth: 170 },
@@ -60,6 +61,18 @@ export default class ClientePessoaJuridicaLista extends React.Component {
     confirmDelete = (cliente) => {
         this.setState({ clienteParaDeletar: cliente, openModalDelete: true });
     }
+    
+    onRadioButtonChange = (e, cliente) => {
+        cliente.instituicaoFinanceira = e.target.value;
+        cliente.dataCadastro = moment(cliente.dataCadastro).format("YYYY-MM-DD");
+        API.put(`clientesPessoaJuridica/instituicaoFinanceira/${cliente.identificador}`, cliente)
+            .then(() => {
+                console.log("Instituição financeira de cliente PJ atualizada por SP.");
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
 
     onDelete = (id) => {
         API.delete(`clientesPessoaJuridica/delete/${id}`)
@@ -76,9 +89,9 @@ export default class ClientePessoaJuridicaLista extends React.Component {
         this.setState({ openModalDelete: false });
     }
 
-    getInstituicao = (value) => {
+    obterInstituicao = (value, cliente) => {
         return (
-            <RadioGroup defaultValue={value} onChange={this.onChange} name="instituicaoFinanceira">
+            <RadioGroup defaultValue={value} onChange={(e) => this.onRadioButtonChange(e, cliente)} name="instituicaoFinanceira">
                 <FormControlLabel name="instituicaoFinanceira" value="Banco A" control={<Radio color="primary" />} label="Banco A" />
                 <FormControlLabel name="instituicaoFinanceira" value="Banco B" control={<Radio color="primary" />} label="Banco B" />
                 <FormControlLabel name="instituicaoFinanceira" value="Banco C" control={<Radio color="primary" />} label="Banco C" />
@@ -129,7 +142,7 @@ export default class ClientePessoaJuridicaLista extends React.Component {
                                     const value = row[column.id];
                                     return (
                                     <TableCell key={column.id} align={column.align}>
-                                        {column.label === 'Instituição financeira' ? this.getInstituicao(value) : value}
+                                        {column.label === 'Instituição financeira' ? this.obterInstituicao(value, row) : value}
                                     </TableCell>
                                     );
                                 })}
